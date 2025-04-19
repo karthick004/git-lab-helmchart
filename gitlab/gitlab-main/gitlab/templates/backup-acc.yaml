@@ -22,7 +22,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: backup-reader
-          image: alpine@sha256:3a3d316b2f5e32e831f4be08f3dbf92cfcc6e57c00fd72f06b0cfb3f50c133e4
+          image: alpine:3.19
           command: ["/bin/sh", "-c", "sleep infinity"]
           resources:
             requests:
