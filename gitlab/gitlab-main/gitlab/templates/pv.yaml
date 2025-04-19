@@ -10,4 +10,4 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: gitlab-storage
   hostPath:
-    path: /mnt/data/gitlab
+    path: /var/opt/gitlab
