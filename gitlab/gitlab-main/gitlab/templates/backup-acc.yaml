@@ -58,29 +58,3 @@ spec:
 
 ---
 
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: gitlab-backup
-  namespace: rds-git
-spec:
-  schedule: "0 2 * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            - name: backup
-              image: gitlab/backup:latest
-              volumeMounts:
-                - name: backup-storage
-                  mountPath: /mnt/backup
-              command: ["/bin/sh", "-c"]
-              args:
-                - >
-                  pg_dump -h {{ .Values.db.host }} -U {{ .Values.db.user }} -d {{ .Values.db.name }} > /mnt/backup/backup.sql
-          restartPolicy: OnFailure
-          volumes:
-            - name: backup-storage
-              persistentVolumeClaim:
-                claimName: backup-pvc
