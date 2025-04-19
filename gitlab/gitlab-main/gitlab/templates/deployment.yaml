@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}@sha256:{{ .Values.image.digest }}"
+          imagePullPolicy: Always
           env:
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
@@ -36,6 +36,22 @@ spec:
               name: gitlab-storage
             - mountPath: /var/opt/gitlab/backups
               name: gitlab-backup-volume
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
