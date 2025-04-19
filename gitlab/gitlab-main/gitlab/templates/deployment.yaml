@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault  # Adding seccomp profile
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}@sha256:{{ .Values.image.digest }}"
+          image: "gitlab/gitlab-ce@sha256:f6039561028de5251c65f4ad81f20b9b5026a70240d33fb4dc3d34472a7dcbc4"
           imagePullPolicy: Always
           env:
             - name: GITLAB_OMNIBUS_CONFIG
