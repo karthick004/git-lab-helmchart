@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: gitlab/gitlab-ce
-  tag: 17.7.2  # Specify the exact version you want (for example, 17.7.2)
+  tag: 17.7.1  # Specify the exact version you want (for example, 17.7.2)
   pullPolicy: Always
 
 
