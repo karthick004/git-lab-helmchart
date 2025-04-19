@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-config
+  namespace: rds-git  # <- Set your custom namespace here
 data:
   gitlab.rb: |
     external_url 'http://gitlab.example.com'
