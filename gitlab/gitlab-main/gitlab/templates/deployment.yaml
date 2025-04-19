@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab
+  namespace: gitlab
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -35,6 +36,20 @@ spec:
               name: gitlab-storage
             - mountPath: /var/opt/gitlab/backups
               name: gitlab-backup-volume
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
       volumes:
         - name: gitlab-storage
           persistentVolumeClaim:
