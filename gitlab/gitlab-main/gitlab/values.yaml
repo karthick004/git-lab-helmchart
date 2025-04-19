@@ -2,8 +2,9 @@ replicaCount: 1
 
 image:
   repository: gitlab/gitlab-ce
-  digest: sha256:f6039561028de5251c65f4ad81f20b9b5026a70240d33fb4dc3d34472a7dcbc4
+  tag: 17.7.2  # Specify the exact version you want (for example, 17.7.2)
   pullPolicy: Always
+
 
 service:
   type: LoadBalancer
