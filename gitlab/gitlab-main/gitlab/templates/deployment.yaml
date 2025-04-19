@@ -13,6 +13,11 @@ spec:
       labels:
         app: gitlab
     spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        runAsNonRoot: true
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}@sha256:{{ .Values.image.digest }}"
@@ -53,9 +58,10 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
             capabilities:
               drop:
                 - ALL
