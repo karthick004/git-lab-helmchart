@@ -2,8 +2,8 @@ replicaCount: 1
 
 image:
   repository: gitlab/gitlab-ce
-  tag: "17.7.7-ce.0"
-  pullPolicy: IfNotPresent
+  digest: sha256:f6039561028de5251c65f4ad81f20b9b5026a70240d33fb4dc3d34472a7dcbc4
+  pullPolicy: Always
 
 service:
   type: LoadBalancer
