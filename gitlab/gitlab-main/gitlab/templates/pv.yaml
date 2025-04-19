@@ -4,11 +4,10 @@ metadata:
   name: gitlab-pv
 spec:
   capacity:
-    storage: 50Gi
-  volumeMode: Filesystem
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: standard
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: gitlab-storage
   hostPath:
-    path: /var/opt/gitlab
+    path: /mnt/data/gitlab
