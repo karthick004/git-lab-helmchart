@@ -48,6 +48,8 @@ spec:
               readOnly: true
             - mountPath: /etc/gitlab
               name: gitlab-config
+            - mountPath: /etc/ssh
+              name: ssh-volume
           livenessProbe:
             httpGet:
               path: /
@@ -66,7 +68,7 @@ spec:
             failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false  # Changed from true to false
+            readOnlyRootFilesystem: false  # ✅ Important
             runAsNonRoot: true
             runAsUser: 998
             capabilities:
@@ -90,4 +92,6 @@ spec:
           secret:
             secretName: {{ .Values.postgresql.existingSecret }}
         - name: gitlab-config
-          emptyDir: {}
+          emptyDir: {}  # For /etc/gitlab
+        - name: ssh-volume
+          emptyDir: {}  # ✅ Writable /etc/ssh
