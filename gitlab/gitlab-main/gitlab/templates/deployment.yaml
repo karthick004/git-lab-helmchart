@@ -20,6 +20,17 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 998:998 /var/opt/gitlab /etc/gitlab /etc/ssh"]
+          volumeMounts:
+            - mountPath: /var/opt/gitlab
+              name: gitlab-storage
+            - mountPath: /etc/gitlab
+              name: gitlab-config
+            - mountPath: /etc/ssh
+              name: ssh-volume
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -68,7 +79,7 @@ spec:
             failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false  # ✅ Important
+            readOnlyRootFilesystem: false
             runAsNonRoot: true
             runAsUser: 998
             capabilities:
@@ -94,4 +105,4 @@ spec:
         - name: gitlab-config
           emptyDir: {}  # For /etc/gitlab
         - name: ssh-volume
-          emptyDir: {}  # ✅ Writable /etc/ssh
+          emptyDir: {}  # Writable /etc/ssh
