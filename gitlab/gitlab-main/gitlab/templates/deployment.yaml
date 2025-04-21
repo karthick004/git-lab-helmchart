@@ -4,8 +4,7 @@ metadata:
   name: gitlab
   namespace: rds-git
   labels:
-    app.kubernetes.io/name: gitlab
-    app.kubernetes.io/instance: gitlab
+    app: gitlab
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
@@ -15,13 +14,11 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app.kubernetes.io/name: gitlab
-      app.kubernetes.io/instance: gitlab
+      app: gitlab
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: gitlab
-        app.kubernetes.io/instance: gitlab
+        app: gitlab
     spec:
       securityContext:
         runAsUser: 998
