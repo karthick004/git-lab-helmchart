@@ -23,7 +23,16 @@ spec:
       initContainers:
         - name: init-permissions
           image: busybox
-          command: ["sh", "-c", "chown -R 998:998 /var/opt/gitlab /etc/gitlab /etc/ssh"]
+          command:
+            - "sh"
+            - "-c"
+            - |
+              echo "Checking permissions before chown"
+              ls -ld /var/opt/gitlab /etc/gitlab /etc/ssh || true
+              echo "Attempting to chown"
+              chown -R 998:998 /var/opt/gitlab /etc/gitlab /etc/ssh || true
+              echo "Checking permissions after chown"
+              ls -ld /var/opt/gitlab /etc/gitlab /etc/ssh || true
           volumeMounts:
             - mountPath: /var/opt/gitlab
               name: gitlab-storage
@@ -105,4 +114,4 @@ spec:
         - name: gitlab-config
           emptyDir: {}  # For /etc/gitlab
         - name: ssh-volume
-          emptyDir: {}  # Writable /etc/ssh
+          emptyDir: {}  # For /etc/ssh
