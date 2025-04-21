@@ -20,31 +20,30 @@ spec:
       labels:
         app: gitlab
     spec:
+      automountServiceAccountToken: false
       securityContext:
-        runAsUser: 998
-        runAsGroup: 998
-        fsGroup: 998
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       initContainers:
         - name: init-permissions
-          image: busybox:1.36
+          image: busybox@sha256:7aafbf94d13bb188379eb5723ad9f10f80f47b3e4d6557c13c1813328a0f70df
           securityContext:
             runAsUser: 0
             runAsGroup: 0
           command:
-            - "sh"
-            - "-c"
+            - sh
+            - -c
             - |
               echo "Setting up directories and permissions..."
               mkdir -p /var/opt/gitlab /etc/gitlab /etc/ssh
-              chown -R 998:998 /var/opt/gitlab /etc/gitlab /etc/ssh
+              chown -R 10001:10001 /var/opt/gitlab /etc/gitlab /etc/ssh
               chmod -R 755 /var/opt/gitlab
               chmod 750 /etc/gitlab
               chmod 750 /etc/ssh
-              ls -ld /var/opt/gitlab /etc/gitlab /etc/ssh
-              ls -la /var/opt/gitlab/
           volumeMounts:
             - mountPath: /var/opt/gitlab
               name: gitlab-storage
@@ -54,8 +53,8 @@ spec:
               name: ssh-volume
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+          imagePullPolicy: Always
           env:
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
@@ -63,13 +62,10 @@ spec:
                 gitlab_rails['db_host'] = '{{ .Values.postgresql.host }}';
                 gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}';
-                gitlab_rails['db_username'] = "/etc/secrets/postgresql/username";
-                gitlab_rails['db_password'] = "/etc/secrets/postgresql/password";
+                gitlab_rails['db_username'] = File.read('/etc/secrets/postgresql/username');
+                gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
-          envFrom:
-            - secretRef:
-                name: {{ .Values.postgresql.existingSecret }}
           ports:
             - name: http
               containerPort: 80
@@ -107,15 +103,20 @@ spec:
             failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
-            runAsUser: 998
-            runAsGroup: 998
+            runAsUser: 10001
+            runAsGroup: 10001
             capabilities:
               drop:
                 - ALL
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
       volumes:
         - name: gitlab-storage
           persistentVolumeClaim:
