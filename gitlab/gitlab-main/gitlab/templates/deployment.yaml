@@ -14,9 +14,9 @@ spec:
         app: gitlab
     spec:
       securityContext:
-        runAsUser: 998            # GitLab default UID
-        runAsGroup: 998           # GitLab default GID
-        fsGroup: 998              # For mounted volume permission
+        runAsUser: 998
+        runAsGroup: 998
+        fsGroup: 998
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
@@ -46,6 +46,8 @@ spec:
             - mountPath: /etc/secrets/postgresql
               name: postgres-secret
               readOnly: true
+            - mountPath: /etc/gitlab
+              name: gitlab-config
           livenessProbe:
             httpGet:
               path: /
@@ -87,3 +89,5 @@ spec:
         - name: postgres-secret
           secret:
             secretName: {{ .Values.postgresql.existingSecret }}
+        - name: gitlab-config
+          emptyDir: {}
