@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: init-permissions
-          image: busybox@sha256:7aafbf94d13bb188379eb5723ad9f10f80f47b3e4d6557c13c1813328a0f70df
+          image: image: busybox@sha256:4f3bafaba965c9c1b0809e8a5dd478e2285b96b2b36be7a6a82e3e3776783247
           securityContext:
             runAsUser: 0
             runAsGroup: 0
