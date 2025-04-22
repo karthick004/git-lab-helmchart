@@ -50,13 +50,18 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.existingSecret }}
+                  key: {{ .Values.postgresql.existingSecretPasswordKey }}
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 {{- range .Values.ingress.hosts }}
-                external_url 'http://{{ .host }}';  # Update to correct FQDN and protocol (http/https)
+                external_url 'http://{{ .host }}';
                 {{- end }}
                 gitlab_rails['db_host'] = '{{ $.Values.postgresql.host }}';
-                gitlab_rails['db_port'] = {{ $.Values.postgresql.port }}; 
+                gitlab_rails['db_port'] = {{ $.Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ $.Values.postgresql.database }}';
                 gitlab_rails['db_username'] = '{{ $.Values.postgresql.username }}';
                 gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
@@ -118,9 +123,8 @@ spec:
               - key: {{ .Values.postgresql.existingSecretPasswordKey }}
                 path: password
         - name: gitlab-config
-          emptyDir:
-            medium: Memory
-            sizeLimit: 100Mi
+          configMap:
+            name: gitlab-config
         - name: ssh-volume
           emptyDir:
             medium: Memory
