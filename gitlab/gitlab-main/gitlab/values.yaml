@@ -45,3 +45,5 @@ resources:
 
 backups:
   existingClaim: gitlab-backup-pvc
+
+  
