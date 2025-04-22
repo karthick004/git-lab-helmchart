@@ -26,25 +26,28 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        - name: fix-permissions
-          image: alpine:3.18
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "[INFO] Fixing permissions on /var/opt/gitlab";
-              chown -R 998:998 /var/opt/gitlab || echo "[WARN] Failed to chown";
-              chmod -R 755 /var/opt/gitlab || echo "[WARN] Failed to chmod";
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - mountPath: /var/opt/gitlab
-              name: gitlab-storage
+  - name: fix-permissions
+    image: alpine:3.18
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "[INFO] Fixing permissions on /var/opt/gitlab";
+        chown -R 998:998 /var/opt/gitlab || echo "[WARN] Failed to chown";
+        chmod -R 755 /var/opt/gitlab || echo "[WARN] Failed to chmod";
+        chown -R 998:998 /var/opt/gitlab/git-data || echo "[WARN] Failed to chown git-data";
+        chmod -R 755 /var/opt/gitlab/git-data || echo "[WARN] Failed to chmod git-data";
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+    volumeMounts:
+      - mountPath: /var/opt/gitlab
+        name: gitlab-storage
+
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
