@@ -22,7 +22,10 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
-        runAsNonRoot: false
+        runAsUser: 998
+        runAsGroup: 998
+        fsGroup: 998
+        runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       initContainers:
@@ -100,8 +103,8 @@ spec:
             failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
             capabilities:
               drop:
                 - ALL
