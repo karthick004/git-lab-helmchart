@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gitlab
-  namespace: rds-git
+  namespace: rds-git    
   labels:
     app: gitlab
 spec:
@@ -103,7 +103,7 @@ spec:
             failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false  # Set to false to allow writing to the file system
+            readOnlyRootFilesystem: false
             runAsNonRoot: false
             capabilities:
               drop:
