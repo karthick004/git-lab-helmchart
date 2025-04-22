@@ -33,11 +33,8 @@ spec:
             - -c
             - |
               echo "[INFO] Fixing permissions on /var/opt/gitlab";
-              if [ -d /var/opt/gitlab ]; then
-                chown -R 998:998 /var/opt/gitlab || echo "[WARN] Failed to chown";
-              else
-                echo "[ERROR] Directory /var/opt/gitlab not found!";
-              fi
+              chown -R 998:998 /var/opt/gitlab || echo "[WARN] Failed to chown";
+              chmod -R 755 /var/opt/gitlab || echo "[WARN] Failed to chmod";
           securityContext:
             runAsUser: 0
             runAsGroup: 0
