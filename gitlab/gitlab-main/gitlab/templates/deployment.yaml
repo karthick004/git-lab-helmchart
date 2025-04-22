@@ -58,7 +58,7 @@ spec:
                 gitlab_rails['db_host'] = '{{ $.Values.postgresql.host }}';
                 gitlab_rails['db_port'] = {{ $.Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ $.Values.postgresql.database }}';
-                gitlab_rails['db_username'] = File.read('/etc/secrets/postgresql/username');
+                gitlab_rails['db_username'] = '{{ $.Values.postgresql.username }}';   # <-- directly from values
                 gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
@@ -115,8 +115,6 @@ spec:
           secret:
             secretName: {{ .Values.postgresql.existingSecret }}
             items:
-              - key: {{ .Values.postgresql.existingSecretUsernameKey }}
-                path: username
               - key: {{ .Values.postgresql.existingSecretPasswordKey }}
                 path: password
         - name: gitlab-config
