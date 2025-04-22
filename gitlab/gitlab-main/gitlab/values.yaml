@@ -24,14 +24,15 @@ persistence:
   enabled: true
   accessMode: ReadWriteOnce
   size: 10Gi
+  existingClaim: gitlab-pvc
 
 postgresql:
   enabled: false
   host: dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com
   port: 5432
   database: mydatabase
-  username: dbadmin
   existingSecret: gitlab-secret
+  existingSecretUsernameKey: POSTGRES_USER
   existingSecretPasswordKey: POSTGRES_PASSWORD
 
 resources:
