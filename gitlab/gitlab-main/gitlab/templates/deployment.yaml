@@ -126,6 +126,5 @@ spec:
           configMap:
             name: gitlab-config
         - name: ssh-volume
-          emptyDir:
-            medium: Memory
-            sizeLimit: 50Mi
+          emptyDir: {}
+           
