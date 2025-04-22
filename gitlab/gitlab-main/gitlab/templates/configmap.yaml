@@ -2,12 +2,14 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gitlab-config
-  namespace: rds-git  # <- Set your custom namespace here
+  namespace: rds-git
 data:
   gitlab.rb: |
-    external_url 'http://gitlab.example.com'
+    external_url 'http://{{ .Values.ingress.hosts | first | dig "host" "gitlab.example.com" }}'
     gitlab_rails['db_host'] = '{{ .Values.postgresql.host }}'
     gitlab_rails['db_port'] = {{ .Values.postgresql.port }}
     gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}'
     gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}'
     gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)"
+    gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
+    nginx['listen_port'] = 80
