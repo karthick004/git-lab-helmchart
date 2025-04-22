@@ -55,7 +55,7 @@ spec:
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
                 gitlab_rails['db_adapter'] = 'postgresql';
-                gitlab_rails['db_host'] = '{{ .Values.postgresql.host }}';
+                gitlab_rails['db_host'] = value: {{ .Values.externalPostgresql.host }};
                 gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}';
                 gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}';
