@@ -52,13 +52,13 @@ spec:
           env:
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
-{{- range .Values.ingress.hosts }}
+                {{- range .Values.ingress.hosts }}
                 external_url '{{ .host }}';
-{{- end }}
+                {{- end }}
                 gitlab_rails['db_host'] = '{{ $.Values.postgresql.host }}';
                 gitlab_rails['db_port'] = {{ $.Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ $.Values.postgresql.database }}';
-                gitlab_rails['db_username'] = '{{ $.Values.postgresql.username }}';   # <-- directly from values
+                gitlab_rails['db_username'] = '{{ $.Values.postgresql.username }}';
                 gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
