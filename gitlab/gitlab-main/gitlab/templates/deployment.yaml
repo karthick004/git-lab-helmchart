@@ -123,8 +123,6 @@ spec:
               - key: {{ .Values.postgresql.existingSecretPasswordKey }}
                 path: password
         - name: gitlab-config
-          configMap:
-            name: gitlab-config
+          emptyDir: {}
         - name: ssh-volume
           emptyDir: {}
-           
