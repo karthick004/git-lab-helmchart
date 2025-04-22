@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: Always
           env:
             - name: GITLAB_OMNIBUS_CONFIG
