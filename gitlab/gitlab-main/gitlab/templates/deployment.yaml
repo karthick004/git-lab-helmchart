@@ -53,10 +53,10 @@ spec:
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 {{- range .Values.ingress.hosts }}
-                external_url '{{ .host }}';
+                external_url 'http://{{ .host }}';  # Update to correct FQDN and protocol (http/https)
                 {{- end }}
                 gitlab_rails['db_host'] = '{{ $.Values.postgresql.host }}';
-                gitlab_rails['db_port'] = {{ $.Values.postgresql.port }};
+                gitlab_rails['db_port'] = {{ $.Values.postgresql.port }}; 
                 gitlab_rails['db_database'] = '{{ $.Values.postgresql.database }}';
                 gitlab_rails['db_username'] = '{{ $.Values.postgresql.username }}';
                 gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
