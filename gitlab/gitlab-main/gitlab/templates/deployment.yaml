@@ -26,27 +26,28 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-  - name: fix-permissions
-    image: alpine:3.18
-    command:
-      - /bin/sh
-      - -c
-      - |
-        echo "[INFO] Fixing permissions on /var/opt/gitlab";
-        if [ -d /var/opt/gitlab ]; then
-          chown -R 998:998 /var/opt/gitlab || echo "[WARN] Failed to chown";
-        else
-          echo "[ERROR] Directory /var/opt/gitlab not found!";
-        fi
-    securityContext:
-      runAsUser: 0
-      runAsGroup: 0
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop: [ "ALL" ]
-    volumeMounts:
-      - mountPath: /var/opt/gitlab
-        name: gitlab-storage
+        - name: fix-permissions
+          image: alpine:3.18
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "[INFO] Fixing permissions on /var/opt/gitlab";
+              if [ -d /var/opt/gitlab ]; then
+                chown -R 998:998 /var/opt/gitlab || echo "[WARN] Failed to chown";
+              else
+                echo "[ERROR] Directory /var/opt/gitlab not found!";
+              fi
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - mountPath: /var/opt/gitlab
+              name: gitlab-storage
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
