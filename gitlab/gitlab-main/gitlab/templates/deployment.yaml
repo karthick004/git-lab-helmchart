@@ -59,7 +59,7 @@ spec:
                 gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}';
                 gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}';
-                gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
+                gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
           ports:
