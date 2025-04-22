@@ -29,25 +29,26 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        - name: fix-permissions
-          image: busybox:1.36
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "[INFO] Ensuring directory exists: /var/opt/gitlab";
-              mkdir -p /var/opt/gitlab/backups;
-              chmod -R 775 /var/opt/gitlab;
-          securityContext:
-            runAsUser: 998
-            runAsGroup: 998
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - mountPath: /var/opt/gitlab
-              name: gitlab-storage
+  - name: fix-permissions
+    image: busybox:1.36
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "[INFO] Ensuring directory exists: /var/opt/gitlab";
+        mkdir -p /var/opt/gitlab/backups;
+        chmod -R 775 /var/opt/gitlab || echo "[WARN] Failed to chmod";
+    securityContext:
+      runAsUser: 998
+      runAsGroup: 998
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+    volumeMounts:
+      - mountPath: /var/opt/gitlab
+        name: gitlab-storage
+
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
