@@ -31,9 +31,9 @@ postgresql:
   host: dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com
   port: 5432
   database: mydatabase
+  username: dbadmin
   existingSecret: gitlab-secret
-  existingSecretUsernameKey: dbadmin
-  existingSecretPasswordKey: ChangeMe@123!
+  existingSecretPasswordKey: POSTGRES_PASSWORD
 
 resources:
   requests:
