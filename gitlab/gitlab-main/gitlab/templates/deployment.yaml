@@ -60,6 +60,8 @@ spec:
                 {{- range .Values.ingress.hosts }}
                 external_url 'http://{{ .host }}';
                 {{- end }}
+                gitlab_rails['db_adapter'] = 'postgresql';
+                gitlab_rails['db_encoding'] = 'utf8';
                 gitlab_rails['db_host'] = '{{ $.Values.postgresql.host }}';
                 gitlab_rails['db_port'] = {{ $.Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ $.Values.postgresql.database }}';
