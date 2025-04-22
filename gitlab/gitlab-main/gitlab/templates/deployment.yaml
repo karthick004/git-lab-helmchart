@@ -50,22 +50,16 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.postgresql.existingSecret }}
-                  key: {{ .Values.postgresql.existingSecretPasswordKey }}
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 {{- range .Values.ingress.hosts }}
                 external_url 'http://{{ .host }}';
                 {{- end }}
                 gitlab_rails['db_adapter'] = 'postgresql';
-                gitlab_rails['db_encoding'] = 'utf8';
-                gitlab_rails['db_host'] = '{{ $.Values.postgresql.host }}';
-                gitlab_rails['db_port'] = {{ $.Values.postgresql.port }};
-                gitlab_rails['db_database'] = '{{ $.Values.postgresql.database }}';
-                gitlab_rails['db_username'] = '{{ $.Values.postgresql.username }}';
+                gitlab_rails['db_host'] = '{{ .Values.postgresql.host }}';
+                gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
+                gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}';
+                gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}';
                 gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
