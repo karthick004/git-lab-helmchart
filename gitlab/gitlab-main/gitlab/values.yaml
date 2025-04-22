@@ -32,8 +32,8 @@ postgresql:
   port: 5432
   database: mydatabase
   existingSecret: gitlab-secret
-  existingSecretUsernameKey: POSTGRES_USER
-  existingSecretPasswordKey: POSTGRES_PASSWORD
+  existingSecretUsernameKey: dbadmin
+  existingSecretPasswordKey: ChangeMe@123!
 
 resources:
   requests:
