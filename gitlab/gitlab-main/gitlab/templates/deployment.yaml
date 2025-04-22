@@ -22,12 +22,27 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
-        runAsUser: 10001
-        runAsGroup: 10001
-        fsGroup: 10001
-        runAsNonRoot: true
+        runAsNonRoot: false
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo "Fixing permissions for /var/opt/gitlab...";
+              chown -R 998:998 /var/opt/gitlab
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ "ALL" ]
+          volumeMounts:
+            - mountPath: /var/opt/gitlab
+              name: gitlab-storage
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -81,9 +96,7 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 10001
-            runAsGroup: 10001
+            runAsNonRoot: false
             capabilities:
               drop:
                 - ALL
