@@ -45,6 +45,7 @@ spec:
               name: gitlab-storage
             - mountPath: /var/opt/gitlab/backups
               name: gitlab-backup-volume
+
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -52,9 +53,7 @@ spec:
           env:
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
-                {{- range .Values.ingress.hosts }}
-                external_url 'http://{{ .host }}';
-                {{- end }}
+                external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
                 gitlab_rails['db_adapter'] = 'postgresql';
                 gitlab_rails['db_host'] = '{{ .Values.postgresql.host }}';
                 gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
@@ -67,7 +66,6 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
-         
           volumeMounts:
             - mountPath: /var/opt/gitlab
               name: gitlab-storage
@@ -103,6 +101,7 @@ spec:
             limits:
               memory: {{ .Values.resources.limits.memory }}
               cpu: {{ .Values.resources.limits.cpu }}
+
       volumes:
         - name: gitlab-storage
           persistentVolumeClaim:
