@@ -3,23 +3,14 @@ kind: ConfigMap
 metadata:
   name: gitlab-config
   namespace: rds-git
-data:
-  gitlab.rb: |
-    external_url 'http://{{ .Values.ingress.hosts | first | dig "host" "gitlab.example.com" }}'
-    gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}'
-    gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }}
-    gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}'
-    gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}'
-    gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)"
-    gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
-    nginx['listen_port'] = 80
-
-  database.yml: |
-    production:
-      adapter: postgresql
-      encoding: unicode
-      host: {{ .Values.externalPostgresql.host }}
-      port: {{ .Values.externalPostgresql.port }}
-      database: {{ .Values.externalPostgresql.database }}
-      username: {{ .Values.externalPostgresql.username }}
-      password: <%= ENV['POSTGRES_PASSWORD'] %>
+env:
+  - name: GITLAB_OMNIBUS_CONFIG
+    value: |
+      external_url 'http://gitlab.cloudmasa.com';
+      gitlab_rails['db_adapter'] = 'postgresql';
+      gitlab_rails['db_host'] = 'dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com';
+      gitlab_rails['db_port'] = 5432;
+      gitlab_rails['db_database'] = 'mydatabase';
+      gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}';
+      gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
+      nginx['listen_port'] = 80;
