@@ -84,17 +84,17 @@ spec:
             httpGet:
               path: /-/health
               port: http
-            initialDelaySeconds: 300
+            initialDelaySeconds: 600
             periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 5
+            timeoutSeconds: 15
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /-/readiness
               port: http
-            initialDelaySeconds: 180
-            periodSeconds: 20
-            timeoutSeconds: 10
+            initialDelaySeconds: 480
+            periodSeconds: 30
+            timeoutSeconds: 15
             failureThreshold: 10
           resources:
             requests:
