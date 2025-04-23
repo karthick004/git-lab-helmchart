@@ -81,14 +81,14 @@ spec:
             - mountPath: /etc/ssh
               name: ssh-volume
           livenessProbe:
-            tcpsocket:
+            tcpSocket:
               port: http
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
           readinessProbe:
-            tcpsocket:
+            tcpSocket:
               port: http
             initialDelaySeconds: 180
             periodSeconds: 20
