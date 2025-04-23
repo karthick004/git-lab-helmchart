@@ -48,17 +48,22 @@ spec:
 
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-postgres-secret
+                  key: password
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
-                gitlab_rails['db_adapter'] = {{ .Values.externalPostgresql.port }};
-                gitlab_rails['db_host'] = value: {{ .Values.externalPostgresql.host }};
-                gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
-                gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}';
-                gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}';
+                gitlab_rails['db_adapter'] = 'postgresql';
+                gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}';
+                gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }};
+                gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}';
+                gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}';
                 gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
@@ -71,9 +76,6 @@ spec:
               name: gitlab-storage
             - mountPath: /var/opt/gitlab/backups
               name: gitlab-backup-volume
-            - mountPath: /etc/secrets/postgresql
-              name: postgres-secret
-              readOnly: true
             - mountPath: /etc/gitlab
               name: gitlab-config
             - mountPath: /etc/ssh
@@ -109,13 +111,7 @@ spec:
         - name: gitlab-backup-volume
           persistentVolumeClaim:
             claimName: {{ .Values.backups.existingClaim | default "gitlab-backup-pvc" }}
-        - name: postgres-secret
-          secret:
-            secretName: {{ .Values.postgresql.existingSecret }}
-            items:
-              - key: {{ .Values.postgresql.existingSecretPasswordKey }}
-                path: password
         - name: gitlab-config
           emptyDir: {}
         - name: ssh-volume
-          emptyDir: {}  
+          emptyDir: {}
