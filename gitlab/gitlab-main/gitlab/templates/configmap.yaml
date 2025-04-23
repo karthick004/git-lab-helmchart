@@ -12,5 +12,5 @@ env:
       gitlab_rails['db_port'] = 5432;
       gitlab_rails['db_database'] = 'mydatabase';
       gitlab_rails['db_username'] = '{{ .Values.postgresql.username }}';
-      gitlab_rails['db_password'] = File.read('/etc/secrets/postgresql/password');
+      gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
       nginx['listen_port'] = 80;
