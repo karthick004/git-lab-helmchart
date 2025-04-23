@@ -54,7 +54,7 @@ spec:
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
-                gitlab_rails['db_adapter'] = 'postgresql';
+                gitlab_rails['db_adapter'] = {{ .Values.externalPostgresql.port }};
                 gitlab_rails['db_host'] = value: {{ .Values.externalPostgresql.host }};
                 gitlab_rails['db_port'] = {{ .Values.postgresql.port }};
                 gitlab_rails['db_database'] = '{{ .Values.postgresql.database }}';
