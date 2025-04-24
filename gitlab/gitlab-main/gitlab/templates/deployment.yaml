@@ -81,19 +81,23 @@ spec:
             - mountPath: /etc/ssh
               name: ssh-volume
           livenessProbe:
-            tcpSocket:
-              port: http
-            initialDelaySeconds: 300
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 10
-          readinessProbe:
-            tcpSocket:
-              port: http
-            initialDelaySeconds: 180
-            periodSeconds: 20
-            timeoutSeconds: 10
-            failureThreshold: 10
+  httpGet:
+    path: /-/liveness
+    port: 8080
+  initialDelaySeconds: 180
+  periodSeconds: 30
+  timeoutSeconds: 10
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /-/readiness
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 15
+  timeoutSeconds: 10
+  failureThreshold: 3
+
           resources:
             requests:
               memory: {{ .Values.resources.requests.memory }}
