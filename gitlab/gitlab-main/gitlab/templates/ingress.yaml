@@ -3,6 +3,10 @@ kind: Ingress
 metadata:
   name: gitlab
   namespace: rds-git
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   rules:
     - host: gitlab.cloudmasa.com
