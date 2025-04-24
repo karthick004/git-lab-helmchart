@@ -59,7 +59,7 @@ spec:
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Always
+          imagePullPolicy: Always  # Ensure Always pull policy is used
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
