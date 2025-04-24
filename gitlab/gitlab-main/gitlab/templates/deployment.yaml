@@ -29,12 +29,19 @@ spec:
             - /bin/sh
             - -c
             - |
-              chown -R 998:998 /var/opt/gitlab || echo "warn: chown fail"
-              chmod -R 755 /var/opt/gitlab || echo "warn: chmod fail"
-              chown -R 998:998 /var/opt/gitlab/git-data || echo "warn: chown git-data"
-              chmod -R 755 /var/opt/gitlab/git-data || echo "warn: chmod git-data"
-              chown -R 998:998 /var/opt/gitlab/backups || echo "warn: chown backups"
-              chmod -R 755 /var/opt/gitlab/backups || echo "warn: chmod backups"
+              for path in \
+                /var/opt/gitlab \
+                /var/opt/gitlab/git-data \
+                /var/opt/gitlab/backups \
+                /var/opt/gitlab/postgresql/data \
+                /var/opt/gitlab/nginx \
+                /var/opt/gitlab/prometheus \
+                /var/opt/gitlab/alertmanager \
+                /var/opt/gitlab/postgres-exporter; do
+                echo "Fixing $path"
+                chown -R 998:998 $path || echo "warn: chown fail"
+                chmod -R 755 $path || echo "warn: chmod fail"
+              done
           securityContext:
             runAsUser: 0
             runAsGroup: 0
@@ -49,7 +56,7 @@ spec:
 
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: Always
           env:
             - name: POSTGRES_PASSWORD
