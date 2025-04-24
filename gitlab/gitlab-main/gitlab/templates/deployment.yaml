@@ -37,7 +37,9 @@ spec:
                 /var/opt/gitlab/nginx \
                 /var/opt/gitlab/prometheus \
                 /var/opt/gitlab/alertmanager \
-                /var/opt/gitlab/postgres-exporter; do
+                /var/opt/gitlab/postgres-exporter \
+                /opt/gitlab/sshd \
+                /opt/gitlab/service; do
                 echo "Fixing $path"
                 chown -R 998:998 $path || echo "warn: chown fail"
                 chmod -R 755 $path || echo "warn: chmod fail"
@@ -69,7 +71,7 @@ spec:
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
                 gitlab_rails['db_adapter'] = 'postgresql';
                 gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}';
-                gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }};
+                gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }}';
                 gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}';
                 gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}';
                 gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
@@ -104,10 +106,10 @@ spec:
             failureThreshold: 10
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory | default "1Gi" }}
+              memory: {{ .Values.resources.requests.memory | default "2Gi" }}
               cpu: {{ .Values.resources.requests.cpu | default "500m" }}
             limits:
-              memory: {{ .Values.resources.limits.memory | default "2Gi" }}
+              memory: {{ .Values.resources.limits.memory | default "4Gi" }}
               cpu: {{ .Values.resources.limits.cpu | default "1000m" }}
           securityContext:
             runAsUser: 998
