@@ -113,11 +113,11 @@ spec:
             failureThreshold: 10
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory | default "2Gi" }}
-              cpu: {{ .Values.resources.requests.cpu | default "500m" }}
+              memory: "{{ .Values.resources.requests.memory | default "2Gi" }}"
+              cpu: "{{ .Values.resources.requests.cpu | default "500m" }}"
             limits:
-              memory: {{ .Values.resources.limits.memory | default "4Gi" }}
-              cpu: {{ .Values.resources.limits.cpu | default "1000m" }}
+              memory: "{{ .Values.resources.limits.memory | default "4Gi" }}"
+              cpu: "{{ .Values.resources.limits.cpu | default "1000m" }}"
           securityContext:
             runAsUser: 998
             runAsGroup: 998
