@@ -4,7 +4,6 @@ metadata:
   name: gitlab
   namespace: rds-git
 spec:
-  tls:
     - hosts:
         - gitlab.cloudmasa.com
   rules:
