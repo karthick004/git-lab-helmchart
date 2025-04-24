@@ -22,6 +22,13 @@ spec:
     spec:
       serviceAccountName: default
       automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 998
+        runAsGroup: 998
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
       initContainers:
         - name: fix-permissions
           image: alpine:3.18
