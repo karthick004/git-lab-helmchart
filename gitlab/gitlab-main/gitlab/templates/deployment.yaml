@@ -22,10 +22,10 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
+        runAsUser: 998
+        runAsGroup: 998
+        fsGroup: 998
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
       initContainers:
         - name: fix-permissions
           image: alpine:3.18
@@ -33,15 +33,10 @@ spec:
             - /bin/sh
             - -c
             - |
-              chown -R 998:998 /var/opt/gitlab || echo "warn: chown fail"
-              chmod -R 755 /var/opt/gitlab || echo "warn: chmod fail"
-              chown -R 998:998 /var/opt/gitlab/git-data || echo "warn: chown git-data"
-              chmod -R 755 /var/opt/gitlab/git-data || echo "warn: chmod git-data"
-              chown -R 998:998 /var/opt/gitlab/backups || echo "warn: chown backups"
-              chmod -R 755 /var/opt/gitlab/backups || echo "warn: chmod backups"
+              echo "Skipping chown/chmod for non-root compatibility"
           securityContext:
-            runAsUser: 0
-            runAsGroup: 0
+            runAsUser: 998
+            runAsGroup: 998
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -55,7 +50,7 @@ spec:
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "Always" }}
+          imagePullPolicy: Always
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -77,6 +72,14 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
+          securityContext:
+            runAsUser: 998
+            runAsGroup: 998
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - mountPath: /var/opt/gitlab
               name: gitlab-storage
@@ -100,19 +103,13 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 10
             failureThreshold: 10
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory | quote }}
-              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | default "512Mi" }}
+              cpu: {{ .Values.resources.requests.cpu | default "250m" }}
             limits:
-              memory: {{ .Values.resources.limits.memory | quote }}
-              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | default "1Gi" }}
+              cpu: {{ .Values.resources.limits.cpu | default "500m" }}
 
       volumes:
         - name: gitlab-storage
