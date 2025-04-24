@@ -20,6 +20,12 @@ spec:
       labels:
         app: gitlab
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       initContainers:
         - name: fix-permissions
           image: alpine:3.18
@@ -49,7 +55,7 @@ spec:
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "Always" }}
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -94,13 +100,19 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 10
             failureThreshold: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory }}
-              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
             limits:
-              memory: {{ .Values.resources.limits.memory }}
-              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
 
       volumes:
         - name: gitlab-storage
