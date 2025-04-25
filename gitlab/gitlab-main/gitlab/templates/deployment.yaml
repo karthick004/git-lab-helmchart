@@ -46,27 +46,27 @@ spec:
             - mountPath: /var/opt/gitlab/backups
               name: gitlab-backup-volume
 
-      containers:
-        - name: gitlab
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default \"17.8.1-ce.0\" }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
-          env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.externalPostgresql.existingSecret }}
-                  key: password
-            - name: GITLAB_OMNIBUS_CONFIG
-              value: |-
-                external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
-                gitlab_rails['db_adapter'] = 'postgresql';
-                gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}';
-                gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }};
-                gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}';
-                gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}';
-                gitlab_rails['db_password'] = '${POSTGRES_PASSWORD}';
-                gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
-                nginx['listen_port'] = 80;
+     containers:
+  - name: gitlab
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default \"17.8.1-ce.0\" }}"
+    imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+    env:
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.externalPostgresql.existingSecret }}
+            key: password
+      - name: GITLAB_OMNIBUS_CONFIG
+        value: |-
+          external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
+          gitlab_rails['db_adapter'] = 'postgresql';
+          gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}';
+          gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }};
+          gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}';
+          gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}';
+          gitlab_rails['db_password'] = '${POSTGRES_PASSWORD}';
+          gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
+          nginx['listen_port'] = 80;
 
           ports:
             - name: http
