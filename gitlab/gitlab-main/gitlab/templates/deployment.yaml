@@ -57,7 +57,7 @@ spec:
                   name: {{ .Values.externalPostgresql.existingSecret }}
                   key: password
             - name: GITLAB_OMNIBUS_CONFIG
-              value: |-
+              value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
                 gitlab_rails['db_adapter'] = 'postgresql';
                 gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}';
