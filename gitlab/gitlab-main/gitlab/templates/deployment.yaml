@@ -72,7 +72,6 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
-
           volumeMounts:
             - mountPath: /var/opt/gitlab
               name: gitlab-storage
