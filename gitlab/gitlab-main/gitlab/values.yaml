@@ -1,109 +1,49 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gitlab
-  namespace: rds-git
-  labels:
-    app: gitlab
-spec:
-  replicas: {{ .Values.replicaCount }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  selector:
-    matchLabels:
-      app: gitlab
-  template:
-    metadata:
-      labels:
-        app: gitlab
-    spec:
-      initContainers:
-        - name: fix-permissions
-          image: alpine:3.18
-          command:
-            - /bin/sh
-            - -c
-            - |
-              chown -R 998:998 /var/opt/gitlab || echo "warn: chown fail"
-              chmod -R 755 /var/opt/gitlab || echo "warn: chmod fail"
-              chown -R 998:998 /var/opt/gitlab/git-data || echo "warn: chown git-data"
-              chmod -R 755 /var/opt/gitlab/git-data || echo "warn: chmod git-data"
-              chown -R 998:998 /var/opt/gitlab/backups || echo "warn: chown backups"
-              chmod -R 755 /var/opt/gitlab/backups || echo "warn: chmod backups"
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - mountPath: /var/opt/gitlab
-              name: gitlab-storage
-            - mountPath: /var/opt/gitlab/backups
-              name: gitlab-backup-volume
+replicaCount: 1
 
-      containers:
-        - name: gitlab
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "17.8.1-ce.0" }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
-          env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.externalPostgresql.existingSecret }}
-                  key: password
-            - name: GITLAB_OMNIBUS_CONFIG
-              value: |
-                external_url 'http://{{ (index .Values.ingress.hosts 0).host }}'
-                gitlab_rails['db_adapter'] = 'postgresql'
-                gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}'
-                gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }}
-                gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}'
-                gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}'
-                gitlab_rails['db_password'] = '${POSTGRES_PASSWORD}'
-                gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
-                nginx['listen_port'] = 80
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          volumeMounts:
-            - mountPath: /var/opt/gitlab
-              name: gitlab-storage
-            - mountPath: /var/opt/gitlab/backups
-              name: gitlab-backup-volume
-            - mountPath: /etc/gitlab
-              name: gitlab-config
-            - mountPath: /etc/ssh
-              name: ssh-volume
-          livenessProbe:
-            tcpSocket:
-              port: http
-            initialDelaySeconds: 300
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 10
-          readinessProbe:
-            tcpSocket:
-              port: http
-            initialDelaySeconds: 180
-            periodSeconds: 20
-            timeoutSeconds: 10
-            failureThreshold: 10
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-        - name: gitlab-storage
-          persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default "gitlab-pvc" }}
-        - name: gitlab-backup-volume
-          persistentVolumeClaim:
-            claimName: {{ .Values.backups.existingClaim | default "gitlab-backup-pvc" }}
-        - name: gitlab-config
-          emptyDir: {}
-        - name: ssh-volume
-          emptyDir: {}
+image:
+  repository: gitlab/gitlab-ce
+  tag: "17.7.7-ce.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+  hosts:
+    - host: gitlab.cloudmasa.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  existingClaim: gitlab-pvc
+
+externalPostgresql:
+  enabled: true
+  host: dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com
+  port: 5432
+  database: mydatabase          # 🔁 Change if needed
+  username: dbadmin             # 🔁 Make sure this is correct
+  password: ChangeMe123!    # 🔁 Use Secret or plain text for now
+
+
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "0.5"
+  limits:
+    memory: "4Gi"
+    cpu: "1"
+
+backups:
+  existingClaim: gitlab-backup-pvc
+
+  
