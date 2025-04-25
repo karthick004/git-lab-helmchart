@@ -64,7 +64,7 @@ spec:
                 gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }}
                 gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}'
                 gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}'
-                gitlab_rails['db_password'] = '{{ .Values.POSTGRES_PASSWORD }}'  # Use $ for environment variable
+                gitlab_rails['db_password'] = '{{ .Values.POSTGRES_PASSWORD }}'   # Use $ for environment variable
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
                 nginx['listen_port'] = 80
 
