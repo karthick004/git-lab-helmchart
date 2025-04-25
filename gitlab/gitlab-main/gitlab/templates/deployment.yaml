@@ -20,6 +20,7 @@ spec:
       labels:
         app: gitlab
     spec:
+      # 🔧 Init container to fix permissions for GitLab
       initContainers:
         - name: fix-permissions
           image: alpine:3.18
@@ -48,13 +49,13 @@ spec:
 
       containers:
         - name: gitlab
-          image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default \"17.8.1-ce.0\" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gitlab-postgres-secret
+                  name: {{ .Values.externalPostgresql.existingSecret }}
                   key: password
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
@@ -84,7 +85,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: http
-            initialDelaySeconds: 300  # Allow more time for startup
+            initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
@@ -92,7 +93,7 @@ spec:
           readinessProbe:
             tcpSocket:
               port: http
-            initialDelaySeconds: 180  # Allow more time for database connections
+            initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 10
             failureThreshold: 10
