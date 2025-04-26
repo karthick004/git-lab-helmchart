@@ -32,7 +32,7 @@ externalPostgresql:
   port: 5432
   database: mydatabase          # 🔁 Change if needed
   username: dbadmin             # 🔁 Make sure this is correct
-  password: ChangeMe123!    # 🔁 Use Secret or plain text for now
+  password: gitlab-postgres-secret    # 🔁 Use Secret or plain text for now
 
 
 resources:
