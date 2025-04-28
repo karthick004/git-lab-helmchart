@@ -71,6 +71,17 @@ spec:
                 secretKeyRef:
                   name: gitlab-postgres-secret
                   key: host
+            - name: POSTGRESQL_HOST
+              value: {{ .Values.externalPostgresql.host }}
+            - name: POSTGRESQL_USER
+              value: {{ .Values.externalPostgresql.username }}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-postgres-secret
+                  key: password
+            - name: POSTGRESQL_DB
+              value: {{ .Values.externalPostgresql.database }}
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
