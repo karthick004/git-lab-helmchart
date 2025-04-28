@@ -30,10 +30,9 @@ externalPostgresql:
   enabled: true
   host: dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com
   port: 5432
-  database: mydatabase          # 🔁 Change if needed
-  username: dbadmin             # 🔁 Make sure this is correct
-  password: gitlab-postgres-secret    # 🔁 Use Secret or plain text for now
-
+  database: mydatabase
+  username: dbadmin
+  password: ""   # ⬅️ Keep empty, because Deployment will use Secret
 
 resources:
   requests:
@@ -45,5 +44,3 @@ resources:
 
 backups:
   existingClaim: gitlab-backup-pvc
-
-  
