@@ -28,7 +28,7 @@ persistence:
 
 externalPostgresql:
   enabled: true
-  host: {{ .Values.postgresql.secret.host }}
+  host: dev-db.cyxw2mqqud77.us-east-1.rds.amazonaws.com
   port: 5432
   database: mydatabase
   username: dbadmin
