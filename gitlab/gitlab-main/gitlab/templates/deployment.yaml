@@ -51,11 +51,6 @@ spec:
           image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
-            - name: SECRET_KEY_BASE
-              valueFrom:
-                secretKeyRef:
-                  name: gitlab-secret-key-base
-                  key: secret_key_base
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
