@@ -56,14 +56,29 @@ spec:
                 secretKeyRef:
                   name: gitlab-postgres-secret
                   key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-postgres-secret
+                  key: username
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-postgres-secret
+                  key: database
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: gitlab-postgres-secret
+                  key: host
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
                 gitlab_rails['db_adapter'] = 'postgresql';
-                gitlab_rails['db_host'] = '{{ .Values.externalPostgresql.host }}';
+                gitlab_rails['db_host'] = "$(POSTGRES_HOST)";
                 gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }};
-                gitlab_rails['db_database'] = '{{ .Values.externalPostgresql.database }}';
-                gitlab_rails['db_username'] = '{{ .Values.externalPostgresql.username }}';
+                gitlab_rails['db_database'] = "$(POSTGRES_DB)";
+                gitlab_rails['db_username'] = "$(POSTGRES_USER)";
                 gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
