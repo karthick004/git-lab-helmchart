@@ -82,6 +82,18 @@ spec:
                   key: password
             - name: POSTGRESQL_DB
               value: {{ .Values.externalPostgresql.database }}
+
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secret
+                  key: email
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secret
+                  key: password
+
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
@@ -93,6 +105,19 @@ spec:
                 gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
+
+                # SMTP settings
+                gitlab_rails['smtp_enable'] = true;
+                gitlab_rails['smtp_address'] = 'smtp.gmail.com';
+                gitlab_rails['smtp_port'] = 587;
+                gitlab_rails['smtp_user_name'] = "$(SMTP_USER)";
+                gitlab_rails['smtp_password'] = "$(SMTP_PASS)";
+                gitlab_rails['smtp_domain'] = 'smtp.gmail.com';
+                gitlab_rails['smtp_authentication'] = 'login';
+                gitlab_rails['smtp_enable_starttls_auto'] = true;
+                gitlab_rails['gitlab_email_from'] = "$(SMTP_USER)";
+                gitlab_rails['gitlab_email_reply_to'] = "$(SMTP_USER)";
+
           ports:
             - name: http
               containerPort: 80
