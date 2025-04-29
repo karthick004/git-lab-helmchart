@@ -46,13 +46,13 @@ spec:
               name: gitlab-storage
             - mountPath: /var/opt/gitlab/backups
               name: gitlab-backup-volume
-           resources:
-      requests:
-        memory: "32Mi"
-        cpu: "10m"
-      limits:
-        memory: "64Mi"
-        cpu: "50m"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
 
       containers:
         - name: gitlab
@@ -90,7 +90,6 @@ spec:
                   key: password
             - name: POSTGRESQL_DB
               value: {{ .Values.externalPostgresql.database }}
-
             - name: SMTP_USER
               valueFrom:
                 secretKeyRef:
@@ -101,7 +100,6 @@ spec:
                 secretKeyRef:
                   name: smtp-secret
                   key: password
-
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
@@ -155,7 +153,6 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 10
             failureThreshold: 10
-
           resources:
             requests:
               memory: {{ .Values.resources.requests.memory }}
