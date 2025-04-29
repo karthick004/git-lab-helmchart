@@ -107,18 +107,19 @@ spec:
             - mountPath: /etc/ssh
               name: ssh-volume
           livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 5
-
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
           readinessProbe:
-            httpGet:
-              path: /readiness
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 180
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 10
 
           resources:
             requests:
