@@ -24,7 +24,7 @@ spec:
       initContainers:
         - name: fix-permissions
           image: alpine:3.18
-          imagepullpolicy: "{{ .Values.image.pullPolicy }}"
+          imagepullpolicy: Always
           command:
             - /bin/sh
             - -c
@@ -58,7 +58,7 @@ spec:
       containers:
         - name: gitlab
           image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
-          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          imagePullPolicy: Always
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
