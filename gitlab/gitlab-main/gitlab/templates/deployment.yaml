@@ -107,15 +107,19 @@ spec:
             - mountPath: /etc/ssh
               name: ssh-volume
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /-/liveness
               port: http
+              scheme: HTTP
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /-/readiness
               port: http
+              scheme: HTTP
             initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 10
