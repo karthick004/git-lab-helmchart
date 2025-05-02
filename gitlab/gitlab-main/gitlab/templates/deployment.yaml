@@ -92,12 +92,7 @@ spec:
                 gitlab_rails['db_password'] = "$(POSTGRESQL_PASSWORD)";
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
-                puma['worker_processes'] = 2;
-                sidekiq['max_concurrency'] = 10;
-                unicorn['worker_processes'] = 2;
-                gitlab_rails['rake_cache_clear'] = true;
 
-                # SMTP Configuration
                 gitlab_rails['smtp_enable'] = true;
                 gitlab_rails['smtp_address'] = 'smtp.gmail.com';
                 gitlab_rails['smtp_port'] = 587;
@@ -108,13 +103,6 @@ spec:
                 gitlab_rails['smtp_enable_starttls_auto'] = true;
                 gitlab_rails['gitlab_email_from'] = "$(SMTP_USER)";
                 gitlab_rails['gitlab_email_reply_to'] = "$(SMTP_USER)";
-
-                # Performance optimizations
-                gitlab_rails['env'] = {
-                  'MALLOC_ARENA_MAX' => 2,
-                  'RAILS_ENV' => 'production',
-                  'NODE_ENV' => 'production'
-                }
           ports:
             - name: http
               containerPort: 80
@@ -131,32 +119,24 @@ spec:
           livenessProbe:
             tcpSocket:
               port: http
-            initialDelaySeconds: 600  # Increased from 300
+            initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
           readinessProbe:
             tcpSocket:
               port: http
-            initialDelaySeconds: 600  # Increased from 180
+            initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 10
             failureThreshold: 10
           resources:
             requests:
-              memory: "{{ .Values.resources.requests.memory | default "6Gi" }}"
-              cpu: "{{ .Values.resources.requests.cpu | default "2" }}"
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
             limits:
-              memory: "{{ .Values.resources.limits.memory | default "8Gi" }}"
-              cpu: "{{ .Values.resources.limits.cpu | default "4" }}"
-          securityContext:
-            runAsUser: 998
-            runAsGroup: 998
-            fsGroup: 998
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
 
       volumes:
         - name: gitlab-storage
