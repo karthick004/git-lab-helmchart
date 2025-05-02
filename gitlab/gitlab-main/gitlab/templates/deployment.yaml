@@ -138,18 +138,16 @@ spec:
               name: gitlab-config
             - mountPath: /etc/ssh
               name: ssh-volume
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 80
+         livenessProbe:
+            tcpSocket:
+              port: http
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
           readinessProbe:
-            httpGet:
-              path: /
-              port: 80
+            tcpSocket:
+              port: http
             initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 10
