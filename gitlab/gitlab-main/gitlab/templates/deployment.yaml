@@ -117,14 +117,16 @@ spec:
             - mountPath: /etc/ssh
               name: ssh-volume
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /help
               port: http
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /help
               port: http
             initialDelaySeconds: 180
             periodSeconds: 20
