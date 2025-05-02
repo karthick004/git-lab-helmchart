@@ -24,7 +24,7 @@ spec:
       initContainers:
         - name: fix-permissions
           image: alpine:3.18
-          imagepullpolicy: Always
+          imagePullPolicy: Always
           command:
             - /bin/sh
             - -c
@@ -60,37 +60,17 @@ spec:
           image: "{{ .Values.image.repository }}{{- if .Values.image.tag }}:{{ .Values.image.tag }}{{- end }}"
           imagePullPolicy: Always
           env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: gitlab-postgres-secret
-                  key: password
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: gitlab-postgres-secret
-                  key: username
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: gitlab-postgres-secret
-                  key: database
-            - name: POSTGRES_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: gitlab-postgres-secret
-                  key: host
             - name: POSTGRESQL_HOST
-              value: {{ .Values.externalPostgresql.host }}
+              value: "{{ .Values.externalPostgresql.host }}"
             - name: POSTGRESQL_USER
-              value: {{ .Values.externalPostgresql.username }}
+              value: "{{ .Values.externalPostgresql.username }}"
+            - name: POSTGRESQL_DB
+              value: "{{ .Values.externalPostgresql.database }}"
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: gitlab-postgres-secret
                   key: password
-            - name: POSTGRESQL_DB
-              value: {{ .Values.externalPostgresql.database }}
             - name: SMTP_USER
               valueFrom:
                 secretKeyRef:
@@ -105,15 +85,14 @@ spec:
               value: |
                 external_url 'http://{{ (index .Values.ingress.hosts 0).host }}';
                 gitlab_rails['db_adapter'] = 'postgresql';
-                gitlab_rails['db_host'] = "$(POSTGRES_HOST)";
+                gitlab_rails['db_host'] = "$(POSTGRESQL_HOST)";
                 gitlab_rails['db_port'] = {{ .Values.externalPostgresql.port }};
-                gitlab_rails['db_database'] = "$(POSTGRES_DB)";
-                gitlab_rails['db_username'] = "$(POSTGRES_USER)";
-                gitlab_rails['db_password'] = "$(POSTGRES_PASSWORD)";
+                gitlab_rails['db_database'] = "$(POSTGRESQL_DB)";
+                gitlab_rails['db_username'] = "$(POSTGRESQL_USER)";
+                gitlab_rails['db_password'] = "$(POSTGRESQL_PASSWORD)";
                 gitlab_rails['backup_path'] = "/var/opt/gitlab/backups";
                 nginx['listen_port'] = 80;
 
-                # SMTP settings
                 gitlab_rails['smtp_enable'] = true;
                 gitlab_rails['smtp_address'] = 'smtp.gmail.com';
                 gitlab_rails['smtp_port'] = 587;
@@ -124,7 +103,6 @@ spec:
                 gitlab_rails['smtp_enable_starttls_auto'] = true;
                 gitlab_rails['gitlab_email_from'] = "$(SMTP_USER)";
                 gitlab_rails['gitlab_email_reply_to'] = "$(SMTP_USER)";
-
           ports:
             - name: http
               containerPort: 80
@@ -138,7 +116,7 @@ spec:
               name: gitlab-config
             - mountPath: /etc/ssh
               name: ssh-volume
-         livenessProbe:
+          livenessProbe:
             tcpSocket:
               port: http
             initialDelaySeconds: 300
@@ -154,11 +132,11 @@ spec:
             failureThreshold: 10
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory }}
-              cpu: {{ .Values.resources.requests.cpu }}
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
             limits:
-              memory: {{ .Values.resources.limits.memory }}
-              cpu: {{ .Values.resources.limits.cpu }}
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
 
       volumes:
         - name: gitlab-storage
