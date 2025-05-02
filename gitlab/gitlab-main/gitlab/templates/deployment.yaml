@@ -118,6 +118,7 @@ spec:
               name: ssh-volume
           livenessProbe:
             tcpSocket:
+              path: /
               port: http
             initialDelaySeconds: 300
             periodSeconds: 30
@@ -125,6 +126,7 @@ spec:
             failureThreshold: 10
           readinessProbe:
             tcpSocket:
+              path: /
               port: http
             initialDelaySeconds: 180
             periodSeconds: 20
