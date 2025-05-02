@@ -142,6 +142,7 @@ spec:
             httpGet:
               path: /
               port: 80
+              protocol: TCP
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
@@ -150,6 +151,7 @@ spec:
             httpGet:
               path: /
               port: 80
+              protocol: TCP
             initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 10
