@@ -140,16 +140,16 @@ spec:
               name: ssh-volume
           livenessProbe:
             httpGet:
-              path: /help
-              port: http
+              path: /healthz
+              port: 8080
             initialDelaySeconds: 300
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 10
           readinessProbe:
             httpGet:
-              path: /help
-              port: http
+              path: /healthz
+              port: 8080
             initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 10
