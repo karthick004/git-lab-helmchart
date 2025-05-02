@@ -140,7 +140,7 @@ spec:
               name: ssh-volume
           livenessProbe:
             httpGet:
-              path: /metrics
+              path: /
               port: 80
             initialDelaySeconds: 300
             periodSeconds: 30
@@ -148,7 +148,7 @@ spec:
             failureThreshold: 10
           readinessProbe:
             httpGet:
-              path: /metrics
+              path: /
               port: 80
             initialDelaySeconds: 180
             periodSeconds: 20
